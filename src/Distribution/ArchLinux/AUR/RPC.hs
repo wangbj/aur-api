@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-
 module Distribution.ArchLinux.AUR.RPC
     ( info
     , search
@@ -23,7 +22,7 @@ aurServer = "https://aur.archlinux.org/rpc/?v=" ++ show aurApi
 genURL :: AURQuery -> String
 genURL (QSearch Nothing txt) = aurServer ++ "&type=search&arg=" ++ txt
 genURL (QSearch (Just field) txt) = aurServer ++ "&type=search&by=" ++ show field ++ "&arg=" ++ txt
-genURL (QInfo q) = aurServer ++ "&type=info" ++ concatMap (\x -> "&arg[]="++x) q
+genURL (QInfo q) = aurServer ++ "&type=info" ++ concatMap (\x -> "&arg%5b%5d="++x) q
 
 queryAUR :: (MonadIO m, MonadCatch m) => AURQuery -> ExceptT String m [AURInfo]
 queryAUR s = do
@@ -40,4 +39,4 @@ search = queryAUR . QSearch Nothing
 searchBy :: (MonadIO m, MonadCatch m) => SearchBy -> String -> ExceptT String m [AURInfo]
 searchBy f = queryAUR . QSearch (Just f)
 
-url1 = "https://aur.archlinux.org/rpc/?v=5&type=info&arg[]=icaclient"
+url1 = "https://aur.archlinux.org/rpc/?v=5&type=info&arg%5b%5d=icaclient"
