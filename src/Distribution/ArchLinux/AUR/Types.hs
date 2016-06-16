@@ -87,7 +87,7 @@ data AURInfo = AURInfo {
   , packageMaintainer     :: Maybe Text
   , packageFirstSubmitted :: Int
   , packageLastModified   :: Int
-  , packageURLPath        :: Text
+  , packageURLPath        :: Maybe Text
   , packageDepends        :: [Text]
   , packageMakeDepends    :: [Text]
   , packageOptDepends     :: [Text]
@@ -111,7 +111,7 @@ instance FromJSON AURInfo where
                     <*> v .:? "Maintainer"
                     <*> v .:  "FirstSubmitted"
                     <*> v .:  "LastModified"
-                    <*> v .:  "URLPath"
+                    <*> v .:? "URLPath"
                     <*> v .:! "Depends"     .!= []
                     <*> v .:! "MakeDepends" .!= []
                     <*> v .:! "OptDepends"  .!= []
