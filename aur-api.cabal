@@ -1,5 +1,5 @@
 name:                aur-api
-version:             0.1.0.0
+version:             0.1.1.0
 synopsis:            ArchLinux AUR json v5 API
 description:         Implements ArchLinux AUR json v5 API defined at:
                      .
