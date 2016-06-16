@@ -23,7 +23,7 @@ instance Show SearchBy where
   show ByNameDesc   = "name-desc"
   show ByMaintainer = "maintainer"
 
-data AURQuery = QSearch (Maybe SearchBy) String
+data AURQuery = QSearch SearchBy String
               | QInfo [String]
 
 data ReplyType = ReplySearch | ReplyMultiInfo | ReplyError

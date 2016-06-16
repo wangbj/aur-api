@@ -23,8 +23,7 @@ aurServer = "https://aur.archlinux.org/rpc/?v=" ++ show aurApi
   where aurApi = 5
 
 genURL :: AURQuery -> String
-genURL (QSearch Nothing txt) = aurServer ++ "&type=search&arg=" ++ txt
-genURL (QSearch (Just field) txt) = aurServer ++ "&type=search&by=" ++ show field ++ "&arg=" ++ txt
+genURL (QSearch field txt) = aurServer ++ "&type=search&by=" ++ show field ++ "&arg=" ++ txt
 genURL (QInfo q) = aurServer ++ "&type=info" ++ concatMap (\x -> "&arg%5b%5d="++x) q
 
 get s = join $ liftM2 httpLbs (parseUrl (genURL s)) (newManager tlsManagerSettings)
@@ -35,23 +34,34 @@ getM s = ExceptT . liftIO $ fmap Right (get s) `catch` (\(SomeException e) -> re
 queryAUR :: (MonadIO m) => AURQuery -> ExceptT String m [AURInfo]
 queryAUR s = getM s >>= \r -> ExceptT . return $ (eitherDecode >=> getAURInfo) (responseBody r)
 
+concatMapM :: (Monad m, Foldable t) => (a -> m [b]) -> t a -> m [b]
+concatMapM op = foldr f (return [])
+    where
+      f x xs = do x <- op x
+                  if null x then xs else fmap (x ++) xs
+
 -- |Query info of given list of packages, match exact names
 -- possible return types are /multiinfo/ and /error/.
 -- /error/ type is captured by ExceptT (Left).
 -- However, query may return empty list which isn't considered as an error.
 info :: (MonadIO m) => [String] -> ExceptT String m [AURInfo]
-info = queryAUR . QInfo
+info = concatMapM (queryAUR . QInfo) . chunks
 
--- |search given string on AUR server
+-- Avoid encode arbitrary long URL when ``info`` package list is too long.
+chunks :: [String] -> [[String]]
+chunks s = if null s then [] else s1 : chunks s'
+  where (s1, s') = splitAt 1024 s
+
+-- |search given string (defaults to name-desc) on AUR server
 -- possible return types are /search/ and /error/.
 -- Like 'info', /error/ is captured by a Left.
 search :: (MonadIO m) => String -> ExceptT String m [AURInfo]
-search = queryAUR . QSearch Nothing
+search = searchBy ByNameDesc
 
 -- |searchBy field 'SearchBy' given string on AUR server
 -- possible return types are /search/ and /error/.
 -- Like 'search', /error/ is captured by a Left.
 searchBy :: (MonadIO m) => SearchBy -> String -> ExceptT String m [AURInfo]
-searchBy f = queryAUR . QSearch (Just f)
+searchBy f = queryAUR . QSearch f
 
 url1 = "https://aur.archlinux.org/rpc/?v=5&type=info&arg%5b%5d=icaclient"
