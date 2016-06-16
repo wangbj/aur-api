@@ -2,7 +2,7 @@
 --
 -- AUR json API spec can be found at https://wiki.archlinux.org/index.php/AurJson
 --
--- * 'info': Get metadata for list of packages (match exact names)
+-- * 'info': Query metadata for list of packages (match exact names)
 --
 -- * 'searchBy': Search a given pattern by either /name/, /desc/, or /name-desc/
 --

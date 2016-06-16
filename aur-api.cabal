@@ -1,8 +1,10 @@
 name:                aur-api
 version:             0.1.0.0
-synopsis:            Implements ArchLinux AUR json v5 API
+synopsis:            ArchLinux AUR json v5 API
 description:         Implements ArchLinux AUR json v5 API defined at:
+                     .
                      https://wiki.archlinux.org/index.php/AurJson
+                     .
 homepage:            https://github.com/wangbj/aur-api
 license:             BSD3
 license-file:        LICENSE
