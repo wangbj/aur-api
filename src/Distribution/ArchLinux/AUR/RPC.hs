@@ -5,8 +5,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Distribution.ArchLinux.AUR.RPC
     ( info
-    , search
     , searchBy
+    , search
     ) where
 
 import qualified Data.ByteString.Lazy as LBS
@@ -52,16 +52,14 @@ chunks :: [String] -> [[String]]
 chunks s = if null s then [] else s1 : chunks s'
   where (s1, s') = splitAt 1024 s
 
--- |search given string (defaults to name-desc) on AUR server
--- possible return types are /search/ and /error/.
--- Like 'info', /error/ is captured by a Left.
-search :: (MonadIO m) => String -> ExceptT String m [AURInfo]
-search = searchBy ByNameDesc
-
 -- |searchBy field 'SearchBy' given string on AUR server
 -- possible return types are /search/ and /error/.
--- Like 'search', /error/ is captured by a Left.
+-- Like 'info', /error/ is captured by a Left.
 searchBy :: (MonadIO m) => SearchBy -> String -> ExceptT String m [AURInfo]
 searchBy f = queryAUR . QSearch f
+
+-- |synonym of 'searchBy' /ByNameDesc/
+search :: (MonadIO m) => String -> ExceptT String m [AURInfo]
+search = searchBy ByNameDesc
 
 url1 = "https://aur.archlinux.org/rpc/?v=5&type=info&arg%5b%5d=icaclient"
