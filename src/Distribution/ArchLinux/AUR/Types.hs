@@ -1,3 +1,4 @@
+-- |Primitive types used for AUR RPC (json) API.
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleContexts #-}
