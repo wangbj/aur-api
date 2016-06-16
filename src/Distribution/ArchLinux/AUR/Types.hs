@@ -78,8 +78,8 @@ data AURInfo = AURInfo {
   , packagePackageBaseID  :: Int
   , packagePackageBase    :: Text
   , packageVersion        :: Text
-  , packageDescription    :: Text
-  , packageURL            :: Text
+  , packageDescription    :: Maybe Text
+  , packageURL            :: Maybe Text
   , packageNumVotes       :: Int
   , packagePopularity     :: Double
   , packageOutOfDate      :: Maybe Int
@@ -102,8 +102,8 @@ instance FromJSON AURInfo where
                     <*> v .:  "PackageBaseID"
                     <*> v .:  "PackageBase"
                     <*> v .:  "Version"
-                    <*> v .:  "Description"
-                    <*> v .:  "URL"
+                    <*> v .:? "Description"
+                    <*> v .:? "URL"
                     <*> v .:  "NumVotes"
                     <*> v .:  "Popularity"
                     <*> v .:  "OutOfDate"
