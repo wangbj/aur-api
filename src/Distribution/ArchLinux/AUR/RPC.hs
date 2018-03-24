@@ -26,7 +26,7 @@ genURL :: AURQuery -> String
 genURL (QSearch field txt) = aurServer ++ "&type=search&by=" ++ show field ++ "&arg=" ++ txt
 genURL (QInfo q) = aurServer ++ "&type=info" ++ concatMap (\x -> "&arg%5b%5d="++x) q
 
-get s = join $ liftM2 httpLbs (parseUrl (genURL s)) (newManager tlsManagerSettings)
+get s = join $ liftM2 httpLbs (parseRequest (genURL s)) (newManager tlsManagerSettings)
 
 getM :: (MonadIO m) => AURQuery -> ExceptT String m (Response LBS.ByteString)
 getM s = ExceptT . liftIO $ fmap Right (get s) `catch` (\(SomeException e) -> return (Left (show e)))
